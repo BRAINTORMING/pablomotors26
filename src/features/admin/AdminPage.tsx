@@ -15,7 +15,7 @@ const tabs: { id: TabId; label: string }[] = [
   { id: 'marcas', label: 'Marcas' },
   { id: 'modelos', label: 'Modelos' },
   { id: 'tipos', label: 'Tipos' },
-  { id: 'combustibles', label: 'Combustibles' },
+  { id: 'combustibles', label: 'Tipos de combustibles' },
   { id: 'transmisiones', label: 'Transmisiones' },
   { id: 'etiquetas', label: 'Etiquetas' },
 ];
@@ -133,7 +133,7 @@ function Dashboard({ email }: { email: string }) {
         {tab === 'marcas' && <LookupPanel table="marcas" title="Marcas" singular="Marca" items={cat.marcas} onChanged={cat.reload} />}
         {tab === 'modelos' && <ModelosPanel marcas={cat.marcas} modelos={cat.modelos} onChanged={cat.reload} />}
         {tab === 'tipos' && <LookupPanel table="tipos_vehiculos" title="Tipos de vehículo" singular="Tipo" items={cat.tipos} onChanged={cat.reload} />}
-        {tab === 'combustibles' && <LookupPanel table="combustibles" title="Combustibles" singular="Combustible" items={cat.combustibles} onChanged={cat.reload} />}
+        {tab === 'combustibles' && <LookupPanel table="combustibles" title="Tipos de combustibles" singular="Tipo de combustible" items={cat.combustibles} onChanged={cat.reload} />}
         {tab === 'transmisiones' && <LookupPanel table="transmisiones" title="Transmisiones" singular="Transmisión" items={cat.transmisiones} onChanged={cat.reload} />}
         {tab === 'etiquetas' && <LookupPanel table="etiquetas" title="Etiquetas" singular="Etiqueta" items={cat.etiquetas} onChanged={cat.reload} />}
       </main>
