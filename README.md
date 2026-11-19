@@ -1,4 +1,4 @@
-# Facet app
+# Abstract app
 
 Starter structure. Every folder has one job, so the project stays easy to read as it grows.
 
@@ -13,7 +13,7 @@ Starter structure. Every folder has one job, so the project stays easy to read a
       components/
         ui/               small building blocks with variants: Button, Card, Heading, Text
         layout/           page structure: Page
-        Logo.tsx          the Facet logo
+        Logo.tsx          the Abstract logo
         ErrorBoundary.tsx keeps a crash from blanking the whole page
       features/<name>/    one folder per product area, with its own components
       types/              shared TypeScript types
@@ -26,10 +26,3 @@ Rules
 - Features import from components, hooks, lib and config. Components never import from features.
 - Text that may change (names, slogans, links) lives in config, not inside components.
 - Use cn() from lib/cn.ts to join class names.
-
-
-## Panel de administración (Supabase)
-
-1. En Supabase → SQL Editor pega y ejecuta `supabase/schema.sql` (antes cambia `TU_CORREO@EJEMPLO.COM` por tu correo y crea ese usuario en Authentication → Users).
-2. Copia `.env.example` a `.env` y completa `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
-3. `npm install && npm run dev` y abre `/#/admin`.
