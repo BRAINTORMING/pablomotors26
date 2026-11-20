@@ -27,7 +27,35 @@ interface RouterContextValue {
 const RouterContext = createContext<RouterContextValue | null>(null);
 
 const normalize = (path: string) => (path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path);
-const readPathname = () => (typeof window === 'undefined' ? '/' : normalize(window.location.pathname));
+const rawPathname = () => (typeof window === 'undefined' ? '/' : normalize(window.location.pathname));
+const hasRoute = (routes: RouteDefinition[], path: string) => routes.some((route) => normalize(route.path) === path);
+
+/** The browser path without the base prefix: ('/preview/abc/about', '/preview/abc') gives '/about'. */
+function toAppPath(raw: string, base: string): string {
+  const rest = base && raw.startsWith(base) ? raw.slice(base.length) : raw;
+  return normalize(rest.startsWith('/') ? rest : '/' + rest);
+}
+
+function inFrame(): boolean {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+}
+
+/** Previews run the app inside an iframe, often under a prefix (or a path like "srcdoc"). Find that prefix once. */
+function detectBase(routes: RouteDefinition[]): string {
+  if (typeof window === 'undefined' || !inFrame()) return '';
+  const raw = rawPathname();
+  if (hasRoute(routes, raw)) return '';
+  const parts = raw.split('/');
+  for (let i = 2; i <= parts.length; i++) {
+    const base = parts.slice(0, i).join('/');
+    if (hasRoute(routes, toAppPath(raw, base))) return base;
+  }
+  return raw;
+}
 
 interface RouterProps {
   routes: RouteDefinition[];
@@ -37,30 +65,34 @@ interface RouterProps {
 
 /** Small router on top of the History API: exact paths, no dependencies. */
 export function Router({ routes, notFound }: RouterProps) {
-  const [pathname, setPathname] = useState(readPathname);
+  const [base] = useState(() => detectBase(routes));
+  const [pathname, setPathname] = useState(() => toAppPath(rawPathname(), base));
 
   useEffect(() => {
-    const onPopState = () => setPathname(readPathname());
+    const onPopState = () => setPathname(toAppPath(rawPathname(), base));
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [base]);
 
-  const navigate = useCallback((to: string, options: NavigateOptions = {}) => {
-    const url = new URL(to, window.location.href);
-    if (url.origin !== window.location.origin) {
-      window.location.assign(to);
-      return;
-    }
-    const next = url.pathname + url.search + url.hash;
-    try {
-      if (options.replace) window.history.replaceState(null, '', next);
-      else window.history.pushState(null, '', next);
-    } catch {
-      // Some sandboxes block the History API: the page still changes, the address bar just stays as it was.
-    }
-    setPathname(normalize(url.pathname));
-    if (!url.hash) window.scrollTo(0, 0);
-  }, []);
+  const navigate = useCallback(
+    (to: string, options: NavigateOptions = {}) => {
+      const url = new URL(to, 'http://app.local');
+      if (to.includes('://') && url.origin !== window.location.origin) {
+        window.location.assign(to);
+        return;
+      }
+      const next = (base + url.pathname || '/') + url.search + url.hash;
+      try {
+        if (options.replace) window.history.replaceState(null, '', next);
+        else window.history.pushState(null, '', next);
+      } catch {
+        // Some sandboxes block the History API: the page still changes, the address bar just stays as it was.
+      }
+      setPathname(normalize(url.pathname));
+      if (!url.hash) window.scrollTo(0, 0);
+    },
+    [base],
+  );
 
   const value = useMemo(() => ({ pathname, navigate }), [pathname, navigate]);
   const match = routes.find((route) => normalize(route.path) === pathname);
