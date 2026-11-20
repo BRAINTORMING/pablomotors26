@@ -1,31 +1,20 @@
 import { useEffect, useState } from 'react';
-import { placeholder, search } from '../lib/images';
+import { firstSrc, placeholder, search } from '@/lib/images';
 
-interface SmartImageProps {
-  query: string;
-  seed?: number;
-  w: number;
-  h: number;
-  alt?: string;
-  eager?: boolean;
-  className?: string;
-}
+type Props = {
+  query: string; category?: string; seed?: number; w: number; h: number;
+  alt?: string; eager?: boolean; fill?: boolean; className?: string;
+};
 
-/** Image that never stays blank: a placeholder first, then a search photo when available, and the placeholder on error. */
-export function SmartImage({ query, seed = 0, w, h, alt = '', eager = false, className = '' }: SmartImageProps) {
-  const [src, setSrc] = useState(() => placeholder(query, w, h));
-
+// fill: the image covers its parent (use inside a relative overflow-hidden wrapper, for hero backgrounds).
+export function SmartImage({ query, category = 'none', seed = 0, w, h, alt = '', eager = false, fill = false, className = '' }: Props) {
+  const [src, setSrc] = useState(() => firstSrc(category, seed, w, h, query));
   useEffect(() => {
     let alive = true;
-    setSrc(placeholder(query, w, h));
-    search(query, seed, w, h).then((url) => {
-      if (alive && url) setSrc(url);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [query, seed, w, h]);
-
+    setSrc(firstSrc(category, seed, w, h, query));
+    search(query, seed, w, h).then((u) => { if (alive && u) setSrc(u); });
+    return () => { alive = false; };
+  }, [query, category, seed, w, h]);
   return (
     <img
       src={src}
@@ -34,7 +23,8 @@ export function SmartImage({ query, seed = 0, w, h, alt = '', eager = false, cla
       height={h}
       loading={eager ? 'eager' : 'lazy'}
       onError={() => setSrc(placeholder(query, w, h))}
-      className={'block h-auto w-full max-w-full object-cover bg-sunken ' + className}
+      style={fill ? undefined : { aspectRatio: w + ' / ' + h }}
+      className={(fill ? 'absolute inset-0 h-full w-full object-cover ' : 'block h-auto w-full max-w-full object-cover bg-sunken ') + className}
     />
   );
 }
