@@ -1,6 +1,8 @@
-import { HomePage } from './features/home/HomePage';
+import { Router } from './router';
+import { routes } from './config/routes';
+import { NotFoundPage } from './pages/NotFoundPage';
 
-/** Root component. When the app grows, choose the page to show here (or add a router). */
+/** Root component. Pages are listed in src/config/routes.tsx. */
 export default function App() {
-  return <HomePage />;
+  return <Router routes={routes} notFound={<NotFoundPage />} />;
 }

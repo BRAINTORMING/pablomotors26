@@ -5,24 +5,22 @@
 @tailwind utilities;
 
 /* Design tokens: colors are RGB channels named by purpose, one set per theme.
-   Both sets define the same names; components never write a color by hand. */
+   Both sets define the same names; components never write a color by hand.
+   The page background (canvas) is a flat color: light gray in light mode, no textures or noise. */
 :root {
   color-scheme: light;
-  --color-canvas: 250 250 250; /* page background */
+  --color-canvas: 244 244 245; /* page background: flat light gray */
   --color-surface: 255 255 255; /* cards, inputs, menus */
-  --color-sunken: 245 245 245; /* quiet fills */
-  --color-fg: 23 23 23; /* main text */
-  --color-muted: 115 115 115; /* secondary text */
-  --color-line: 229 229 229; /* borders */
-  --color-action: 23 23 23; /* primary action and active state */
-  --color-action-hover: 64 64 64;
+  --color-sunken: 236 236 238; /* quiet fills */
+  --color-fg: 24 24 27; /* main text */
+  --color-muted: 113 113 122; /* secondary text */
+  --color-line: 224 224 228; /* borders */
+  --color-action: 24 24 27; /* primary action and active state */
+  --color-action-hover: 63 63 70;
   --color-on-action: 255 255 255; /* text on top of the action color */
   --color-success: 22 163 74;
   --color-warning: 217 119 6;
   --color-danger: 220 38 38;
-  --noise-opacity: 0.07; /* fine grain */
-  --cloud-opacity: 0.06; /* large soft mottling that makes the surface feel like paper */
-  --glow-opacity: 0.05; /* soft light pools in the corners */
 }
 
 .dark {
@@ -39,56 +37,28 @@
   --color-success: 74 222 128;
   --color-warning: 251 191 36;
   --color-danger: 248 113 113;
-  --noise-opacity: 0.04;
-  --cloud-opacity: 0.05;
-  --glow-opacity: 0.04;
 }
 
-body {
-  @apply font-sans antialiased bg-canvas text-fg;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply min-h-screen bg-canvas font-sans text-fg antialiased;
+  }
+
+  ::selection {
+    background: rgb(var(--color-fg) / 0.15);
+  }
 }
 
-/* Organic surface in three static layers, all drawn with SVG or gradients: no image files, no animation.
-   1. html::before  two soft light pools in opposite corners (depth, like light falling on paper).
-   2. body::before  large soft clouds (very low frequency, stretched a little) so the surface is uneven and natural.
-   3. body::after   fine grain (four octaves) tiled every 256px.
-   All sit above the content but ignore clicks, so they also work when a page paints its own bg-canvas wrapper.
-   Tune --glow-opacity, --cloud-opacity and --noise-opacity above: 0 turns a layer off. */
-html::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 68;
-  pointer-events: none;
-  background-image:
-    radial-gradient(60% 50% at 8% 0%, rgb(var(--color-fg) / var(--glow-opacity)), transparent 70%),
-    radial-gradient(55% 45% at 100% 100%, rgb(var(--color-fg) / var(--glow-opacity)), transparent 70%);
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 69;
-  pointer-events: none;
-  opacity: var(--cloud-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0045 0.0075' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.2' intercept='-0.6'/%3E%3CfeFuncG type='linear' slope='2.2' intercept='-0.6'/%3E%3CfeFuncB type='linear' slope='2.2' intercept='-0.6'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
-  background-size: 1024px 1024px;
-}
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  pointer-events: none;
-  opacity: var(--noise-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.7' intercept='-0.35'/%3E%3CfeFuncG type='linear' slope='1.7' intercept='-0.35'/%3E%3CfeFuncB type='linear' slope='1.7' intercept='-0.35'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
-}
-
-@media (prefers-contrast: more) {
-  html::before,
-  body::before,
-  body::after {
-    display: none;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

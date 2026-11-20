@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-179.970 -195.375 360 360" width="360" height="360" role="img" aria-label="Abstract" shape-rendering="geometricPrecision">
+  <defs>
+    <path id="abs-piece" d="M -84.852814 0 L 84.852814 0 A 14 14 0 0 1 98.666062 16.279070 A 100 100 0 0 1 -98.666062 16.279070 A 14 14 0 0 1 -84.852814 0 Z" />
+  </defs>
+  <g fill="#131619">
+    <use href="#abs-piece" transform="translate(-52.173316 28.867513)" />
+    <use href="#abs-piece" transform="rotate(-120) translate(-52.173316 28.867513)" />
+    <use href="#abs-piece" transform="rotate(120) translate(-52.173316 28.867513)" />
+  </g>
+</svg>

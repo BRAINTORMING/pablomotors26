@@ -1,0 +1,3 @@
+# Rules for crawlers. Add a Sitemap line when the site has a public domain.
+User-agent: *
+Allow: /

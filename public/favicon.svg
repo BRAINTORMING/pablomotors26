@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-179.970 -195.375 360 360" width="64" height="64">
+  <style>
+    .p { fill: #131619; }
+    @media (prefers-color-scheme: dark) { .p { fill: #ededed; } }
+  </style>
+  <defs>
+    <path id="abs-piece" class="p" d="M -84.852814 0 L 84.852814 0 A 14 14 0 0 1 98.666062 16.279070 A 100 100 0 0 1 -98.666062 16.279070 A 14 14 0 0 1 -84.852814 0 Z" />
+  </defs>
+  <use href="#abs-piece" transform="translate(-52.173316 28.867513)" />
+  <use href="#abs-piece" transform="rotate(-120) translate(-52.173316 28.867513)" />
+  <use href="#abs-piece" transform="rotate(120) translate(-52.173316 28.867513)" />
+</svg>

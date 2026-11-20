@@ -16,24 +16,29 @@ const sizes: Record<Size, string> = {
   lg: 'h-12 px-6 text-base',
 };
 
+interface StyleOptions {
+  variant?: Variant;
+  size?: Size;
+  className?: string;
+}
+
+/** The button look as a class string, so a Link can look like a button: <Link className={buttonStyles()} />. */
+export function buttonStyles({ variant = 'primary', size = 'md', className }: StyleOptions = {}) {
+  return cn(
+    'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/30',
+    'disabled:pointer-events-none disabled:opacity-50',
+    variants[variant],
+    sizes[size],
+    className,
+  );
+}
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
 }
 
-export function Button({ variant = 'primary', size = 'md', type = 'button', className, ...props }: ButtonProps) {
-  return (
-    <button
-      type={type}
-      className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/30',
-        'disabled:pointer-events-none disabled:opacity-50',
-        variants[variant],
-        sizes[size],
-        className,
-      )}
-      {...props}
-    />
-  );
+export function Button({ variant, size, type = 'button', className, ...props }: ButtonProps) {
+  return <button type={type} className={buttonStyles({ variant, size, className })} {...props} />;
 }
