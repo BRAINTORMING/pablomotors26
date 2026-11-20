@@ -2,21 +2,19 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { es, type Dict } from './es';
 import { en } from './en';
 import { pt } from './pt';
-import { ko } from './ko';
 
-export type Lang = 'es' | 'en' | 'pt' | 'ko';
+export type Lang = 'es' | 'en' | 'pt';
 
 export const LANGS: { code: Lang; flag: string; name: string }[] = [
   { code: 'es', flag: '🇪🇸', name: 'Español' },
   { code: 'en', flag: '🇺🇸', name: 'English' },
   { code: 'pt', flag: '🇵🇹', name: 'Português' },
-  { code: 'ko', flag: '🇰🇷', name: '한국어' },
 ];
 
-const dicts: Record<Lang, Dict> = { es, en, pt, ko };
+const dicts: Record<Lang, Dict> = { es, en, pt };
 const STORAGE_KEY = 'g9-lang';
 
-const isLang = (v: unknown): v is Lang => v === 'es' || v === 'en' || v === 'pt' || v === 'ko';
+const isLang = (v: unknown): v is Lang => v === 'es' || v === 'en' || v === 'pt';
 
 function initialLang(): Lang {
   try {
