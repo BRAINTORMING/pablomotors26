@@ -1,7 +1,7 @@
 import { Button } from '../../../components/ui';
 import { useLang } from '../../../i18n';
 import { HeroBackground } from './HeroBackground';
-import logo from '@/assets/g9-auto-traders.jpg';
+import logo from '@/assets/g9-auto-traders.png';
 
 export function Hero() {
   const { d } = useLang();
